@@ -1,0 +1,223 @@
+﻿<Window x:Class="Hangman.Views.GameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Hangman Game" Height="620" Width="820"
+        WindowStartupLocation="CenterScreen"
+        Background="#FAFAFA"
+        Closing="Window_Closing">
+
+    <!-- ================================================================
+         SCURTATURI TASTATURA (Comanda suplimentara prin InputBinding)
+         ================================================================ -->
+    <Window.InputBindings>
+        <!-- Ctrl+N = New Game -->
+        <KeyBinding Key="N" Modifiers="Ctrl" Command="{Binding NewGameCommand}"/>
+        <!-- Ctrl+O = Open Game -->
+        <KeyBinding Key="O" Modifiers="Ctrl" Command="{Binding OpenGameCommand}"/>
+        <!-- Ctrl+S = Save Game -->
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding SaveGameCommand}"/>
+        <!-- Escape = Cancel (inapoi la Login) -->
+        <KeyBinding Key="Escape" Command="{Binding CancelCommand}"/>
+    </Window.InputBindings>
+
+    <DockPanel>
+
+        <!-- ============================================================
+             MENIU
+             ============================================================ -->
+        <Menu DockPanel.Dock="Top">
+
+            <!-- FILE -->
+            <MenuItem Header="_File">
+                <MenuItem Header="_New Game"
+                          Command="{Binding NewGameCommand}"
+                          InputGestureText="Ctrl+N"/>
+                <MenuItem Header="_Open Game"
+                          Command="{Binding OpenGameCommand}"
+                          InputGestureText="Ctrl+O"/>
+                <MenuItem Header="_Save Game"
+                          Command="{Binding SaveGameCommand}"
+                          InputGestureText="Ctrl+S"/>
+                <Separator/>
+                <MenuItem Header="S_tatistics"
+                          Command="{Binding StatisticsCommand}"/>
+                <Separator/>
+                <MenuItem Header="_Cancel"
+                          Command="{Binding CancelCommand}"
+                          InputGestureText="Esc"/>
+            </MenuItem>
+
+            <!-- CATEGORIES - generat dinamic in code-behind -->
+            <MenuItem Header="_Categories" x:Name="CategoriesMenu"/>
+
+            <!-- HELP -->
+            <MenuItem Header="_Help">
+                <MenuItem Header="_About"
+                          Command="{Binding AboutCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- ============================================================
+             CONTINUT PRINCIPAL
+             ============================================================ -->
+        <Grid Margin="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Header: user + timer + nivel -->
+                <RowDefinition Height="*"/>
+                <!-- Spanzuratoare + cuvant + litere -->
+                <RowDefinition Height="Auto"/>
+                <!-- Status bar -->
+            </Grid.RowDefinitions>
+
+            <!--  HEADER  -->
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Username + avatar -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Image Source="{Binding UserImage}"
+                           Width="48" Height="48"
+                           Stretch="UniformToFill"
+                           Margin="0,0,8,0"/>
+                    <TextBlock Text="{Binding CurrentUser.Username}"
+                               FontSize="18" FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- Nivel curent -->
+                <TextBlock Grid.Column="1"
+                           Text="{Binding LevelDisplay}"
+                           FontSize="16" FontWeight="SemiBold"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="#3F51B5"/>
+
+                <!-- Timer -->
+                <TextBlock Grid.Column="2"
+                           Text="{Binding TimerDisplay}"
+                           FontSize="18" FontWeight="Bold"
+                           Foreground="#E53935"
+                           VerticalAlignment="Center"/>
+            </Grid>
+
+            <!--  ZONA PRINCIPALA  -->
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/>
+                    <!-- Spanzuratoare (Canvas) -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Dreapta: vieti + cuvant + litere -->
+                </Grid.ColumnDefinitions>
+
+                <!-- CANVAS SPANZURATOARE (redesenat in code-behind) -->
+                <Canvas Grid.Column="0"
+                        x:Name="HangmanCanvas"
+                        Background="White"
+                        Width="210" Height="260"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Margin="0,0,10,0">
+                    <!-- Stalpul - intotdeauna vizibil -->
+                    <Line X1="30" Y1="250" X2="180" Y2="250" Stroke="Black" StrokeThickness="3"/>
+                    <Line X1="80" Y1="250" X2="80" Y2="20"  Stroke="Black" StrokeThickness="3"/>
+                    <Line X1="80" Y1="20"  X2="150" Y2="20" Stroke="Black" StrokeThickness="3"/>
+                    <Line X1="150" Y1="20" X2="150" Y2="45" Stroke="Black" StrokeThickness="3"/>
+                </Canvas>
+
+                <!-- DREAPTA: vieti + cuvant + litere -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Stretch">
+
+                    <!-- Categoria curenta -->
+                    <TextBlock Text="{Binding CurrentCategory}"
+                               FontSize="13" Foreground="#555"
+                               Margin="0,0,0,8"/>
+
+                    <!-- Bara de vieti (6 slot-uri) -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                        <TextBlock Text="Vieti: " FontSize="13" VerticalAlignment="Center"/>
+                        <ItemsControl ItemsSource="{Binding Lives}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="30" Height="30"
+                                            BorderBrush="#999" BorderThickness="1"
+                                            Margin="2" CornerRadius="4"
+                                            Background="White">
+                                        <TextBlock Text="{Binding DisplayText}"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"
+                                                   FontWeight="Bold"
+                                                   Foreground="#E53935"
+                                                   FontSize="16"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <!-- Cuvantul de ghicit (slot-uri cu litere) -->
+                    <ItemsControl ItemsSource="{Binding WordDisplay}"
+                                  Margin="0,0,0,20">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="32" Height="40"
+                                        BorderBrush="#555" BorderThickness="0,0,0,2"
+                                        Margin="3">
+                                    <TextBlock Text="{Binding Display}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="22" FontWeight="Bold"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <!-- Grila butoane litere A-Z -->
+                    <ItemsControl ItemsSource="{Binding LetterButtons}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Letter}"
+                                        Command="{Binding Command}"
+                                        IsEnabled="{Binding IsEnabled}"
+                                        Width="36" Height="36"
+                                        Margin="2"
+                                        FontSize="13" FontWeight="SemiBold"
+                                        Background="#E3F2FD"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </Grid>
+
+            <!--  STATUS BAR  -->
+            <Border Grid.Row="2"
+                    Background="#EEEEEE"
+                    Margin="0,8,0,0"
+                    Padding="8,4"
+                    CornerRadius="4">
+                <TextBlock Text="{Binding StatusMessage}"
+                           FontSize="12" Foreground="#333"/>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>

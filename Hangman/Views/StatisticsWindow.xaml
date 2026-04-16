@@ -1,0 +1,49 @@
+﻿<Window x:Class="Hangman.Views.StatisticsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:Hangman.ViewModels"
+        Title="Statistici Joc" Height="420" Width="560"
+        WindowStartupLocation="CenterOwner"
+        Background="#F5F5F5">
+
+    <Window.DataContext>
+        <vm:StatisticsViewModel/>
+    </Window.DataContext>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Statistici - Toti utilizatorii"
+                   FontSize="16" FontWeight="Bold"
+                   Margin="0,0,0,10"/>
+
+        <!-- Tabel statistici legat la ViewModel prin Binding -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Rows}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  Background="White"
+                  AlternatingRowBackground="#F0F4FF"
+                  CanUserResizeRows="False"
+                  Margin="0,0,0,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Utilizator"  Binding="{Binding Username}"    Width="130"/>
+                <DataGridTextColumn Header="Categorie"   Binding="{Binding Category}"    Width="120"/>
+                <DataGridTextColumn Header="Jucate"      Binding="{Binding GamesPlayed}" Width="70"/>
+                <DataGridTextColumn Header="Castigate"   Binding="{Binding GamesWon}"    Width="80"/>
+                <DataGridTextColumn Header="Pierdute"    Binding="{Binding GamesLost}"   Width="80"/>
+                <DataGridTextColumn Header="Rata castig" Binding="{Binding WinRate}"     Width="90"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="2" Content="Inchide"
+                Click="Close_Click"
+                HorizontalAlignment="Right"
+                Width="90"/>
+    </Grid>
+</Window>

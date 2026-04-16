@@ -1,0 +1,48 @@
+﻿<Window x:Class="Hangman.Views.OpenGameWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Deschide joc salvat" Height="320" Width="480"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F5F5F5">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Alege un joc salvat pentru a continua:"
+                   FontSize="14" FontWeight="Bold"
+                   Margin="0,0,0,10"/>
+
+        <!-- Lista jocuri salvate -->
+        <ListView Grid.Row="1"
+                  x:Name="SavesList"
+                  Background="White"
+                  FontSize="13"
+                  Margin="0,0,0,12">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Data salvare"   Width="160"
+                                    DisplayMemberBinding="{Binding SavedAt}"/>
+                    <GridViewColumn Header="Categorie"      Width="110"
+                                    DisplayMemberBinding="{Binding Category}"/>
+                    <GridViewColumn Header="Timp ramas"     Width="85"
+                                    DisplayMemberBinding="{Binding TimeRemaining}"/>
+                    <GridViewColumn Header="Nivel"          Width="55"
+                                    DisplayMemberBinding="{Binding ConsecutiveWins}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!-- Butoane -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Deschide" Click="Open_Click"
+                    Width="90" Background="#4CAF50" Foreground="White" FontWeight="Bold"/>
+            <Button Content="Anuleaza" Click="Cancel_Click" Width="80"/>
+        </StackPanel>
+    </Grid>
+</Window>
