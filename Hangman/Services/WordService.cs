@@ -33,6 +33,7 @@ namespace Hangman.Services
             {
                 CreateDefaultWords();
             }
+            Categories = _words.Keys.ToList();
         }
 
         private void CreateDefaultWordsFile(string path)
