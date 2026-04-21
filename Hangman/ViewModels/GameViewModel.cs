@@ -79,8 +79,8 @@ namespace Hangman.ViewModels
             private set
             {
                 _timeRemaining = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(TimerDisplay));
+                OnPropertyChanged(); //  actualizeaza binding-urile la TimeRemaining
+                OnPropertyChanged(nameof(TimerDisplay)); // actualizeaza binding-urile la TimerDisplay (care depinde de TimeRemaining)
             }
         }
 
