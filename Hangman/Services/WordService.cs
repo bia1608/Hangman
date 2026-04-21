@@ -48,16 +48,11 @@ namespace Hangman.Services
         {
             _words = new Dictionary<string, List<string>>
             {
-                ["Cars"] = new List<string> { "FERRARI", "LAMBORGHINI", "TOYOTA", "MERCEDES",
-                                                   "VOLKSWAGEN", "PORSCHE", "BUGATTI", "MCLAREN" },
-                ["Movies"] = new List<string> { "INCEPTION", "TITANIC", "AVATAR", "GLADIATOR",
-                                                   "INTERSTELLAR", "MATRIX", "JOKER", "AVENGERS" },
-                ["Rivers"] = new List<string> { "AMAZON", "NILE", "DANUBE", "THAMES",
-                                                   "VOLGA", "MISSISSIPPI", "RHINE", "JORDAN" },
-                ["Animals"] = new List<string> { "ELEPHANT", "GIRAFFE", "PENGUIN", "DOLPHIN",
-                                                   "CHEETAH", "KANGAROO", "CROCODILE", "FLAMINGO" },
-                ["Countries"] = new List<string> { "ROMANIA", "FRANCE", "GERMANY", "JAPAN",
-                                                   "BRAZIL", "AUSTRALIA", "MEXICO", "ARGENTINA" }
+                ["Cars"] = new() { "FERRARI", "LAMBORGHINI", "TOYOTA", "MERCEDES", "VOLKSWAGEN", "PORSCHE", "BUGATTI", "MCLAREN" },
+                ["Movies"] = new() { "INCEPTION", "TITANIC", "AVATAR", "GLADIATOR", "INTERSTELLAR", "MATRIX", "JOKER", "AVENGERS" },
+                ["Rivers"] = new() { "AMAZON", "NILE", "DANUBE", "THAMES", "VOLGA", "MISSISSIPPI", "RHINE", "JORDAN" },
+                ["Animals"] = new() { "ELEPHANT", "GIRAFFE", "PENGUIN", "DOLPHIN", "CHEETAH", "KANGAROO", "CROCODILE", "FLAMINGO" },
+                ["Countries"] = new() { "ROMANIA", "FRANCE", "GERMANY", "JAPAN", "BRAZIL", "AUSTRALIA", "MEXICO", "ARGENTINA" }
             };
         }
 

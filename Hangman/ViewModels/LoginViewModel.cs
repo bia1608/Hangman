@@ -110,7 +110,7 @@ namespace Hangman.ViewModels
 
         private void LoadUserImage(string? imagePath)
         {
-            if (string.IsNullOrEmpty(imagePath) || !File.Exists(imagePath))
+            if (string.IsNullOrEmpty(imagePath))
             {
                 SelectedUserImage = null;
                 return;

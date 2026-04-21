@@ -28,7 +28,7 @@ namespace Hangman.Services
                     File.Copy(projectDirUsersFile, _filePath);
                 }
             }
-        }
+        } 
 
         public List<User> LoadUsers()
         {

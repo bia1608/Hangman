@@ -11,6 +11,7 @@ namespace HangmanGame.Models
     public class UserStatistics
     {
         public string Username { get; set; } = string.Empty;
+
         // Cheie = numele categoriei (ex: "Cars", "All Categories")
         public Dictionary<string, CategoryStats> Categories { get; set; } = new();
     }

@@ -10,6 +10,13 @@
 
   <ItemGroup>
     <Folder Include="Data\Images\" />
+    <Folder Include="Data\HangmanStages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\HangmanStages\*.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

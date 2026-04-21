@@ -25,6 +25,7 @@ namespace Hangman.Views
     {
         private readonly UserService _userService;
         private string _selectedImagePath = string.Empty;
+        private string _selectedImageFullPath = string.Empty;
 
         // Lista cai relative catre imaginile predefinite din Data/Images/
         private readonly List<string> _predefinedImages = new();
@@ -43,7 +44,7 @@ namespace Hangman.Views
             string imagesDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Images");
             Directory.CreateDirectory(imagesDir);
 
-            var extensions = new[] { "*.jpg", "*.jpeg", "*.gif", "*.png" };
+            var extensions = new[] { "*.jpg", "*.jpeg", "*.gif" };
             foreach (var ext in extensions)
             {
                 foreach (var file in Directory.GetFiles(imagesDir, ext))
@@ -98,7 +99,8 @@ namespace Hangman.Views
             _selectedImagePath = relativePath;
             SelectedPathText.Text = relativePath;
 
-            ShowPreview(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath));
+            _selectedImageFullPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+            ShowPreview(_selectedImageFullPath);
         }
 
         private void BrowseImage_Click(object sender, RoutedEventArgs e)
@@ -106,23 +108,16 @@ namespace Hangman.Views
             var dialog = new OpenFileDialog
             {
                 Title = "Alege o imagine",
-                Filter = "Imagini (*.jpg;*.jpeg;*.gif;*.png)|*.jpg;*.jpeg;*.gif;*.png"
+                Filter = "Imagini (*.jpg;*.jpeg;*.gif)|*.jpg;*.jpeg;*.gif"
             };
 
             if (dialog.ShowDialog() == true)
             {
-                // Salvam calea relativa daca fisierul e in subfolderul aplicatiei
-                string selected = dialog.FileName;
-                string appBase = AppDomain.CurrentDomain.BaseDirectory;
-
-                if (selected.StartsWith(appBase, StringComparison.OrdinalIgnoreCase))
-                    _selectedImagePath = System.IO.Path.GetRelativePath(appBase, selected);
-                else
-                    _selectedImagePath = selected; // cale absoluta (fisier extern)
-
+                _selectedImageFullPath = dialog.FileName;
+                _selectedImagePath = System.IO.Path.GetFileName(_selectedImageFullPath);
                 SelectedPathText.Text = _selectedImagePath;
                 PredefinedImagesList.SelectedIndex = -1;
-                ShowPreview(selected);
+                ShowPreview(_selectedImageFullPath);
             }
         }
 
@@ -167,11 +162,37 @@ namespace Hangman.Views
                 return;
             }
 
+            // Copiem avatarul in folderul aplicatiei astfel incat sa salvam mereu cai relative
+            string relativeAvatarPath = string.Empty;
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(_selectedImageFullPath) && File.Exists(_selectedImageFullPath))
+                {
+                    var avatarsDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Images", "Avatars");
+                    Directory.CreateDirectory(avatarsDir);
+
+                    var ext = System.IO.Path.GetExtension(_selectedImageFullPath).ToLowerInvariant();
+                    if (ext is not (".jpg" or ".jpeg" or ".gif"))
+                        ext = ".jpg";
+
+                    var safeUsername = string.Concat(username.Where(ch => char.IsLetterOrDigit(ch) || ch == '_' || ch == '-'));
+                    if (string.IsNullOrWhiteSpace(safeUsername)) safeUsername = username;
+
+                    var destFile = System.IO.Path.Combine(avatarsDir, $"{safeUsername}{ext}");
+                    File.Copy(_selectedImageFullPath, destFile, overwrite: true);
+                    relativeAvatarPath = System.IO.Path.GetRelativePath(AppDomain.CurrentDomain.BaseDirectory, destFile);
+                }
+            }
+            catch
+            {
+                relativeAvatarPath = string.Empty;
+            }
+
             // Cream si salvam utilizatorul
             var user = new User
             {
                 Username = username,
-                ImagePath = _selectedImagePath
+                ImagePath = relativeAvatarPath
             };
             _userService.AddUser(user);
 

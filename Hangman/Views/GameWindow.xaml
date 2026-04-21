@@ -30,21 +30,17 @@
             <!-- FILE -->
             <MenuItem Header="_File">
                 <MenuItem Header="_New Game"
-                          Command="{Binding NewGameCommand}"
-                          InputGestureText="Ctrl+N"/>
+                          Command="{Binding NewGameCommand}"/>
                 <MenuItem Header="_Open Game"
-                          Command="{Binding OpenGameCommand}"
-                          InputGestureText="Ctrl+O"/>
+                          Command="{Binding OpenGameCommand}"/>
                 <MenuItem Header="_Save Game"
-                          Command="{Binding SaveGameCommand}"
-                          InputGestureText="Ctrl+S"/>
+                          Command="{Binding SaveGameCommand}"/>
                 <Separator/>
                 <MenuItem Header="S_tatistics"
                           Command="{Binding StatisticsCommand}"/>
                 <Separator/>
                 <MenuItem Header="_Cancel"
-                          Command="{Binding CancelCommand}"
-                          InputGestureText="Esc"/>
+                          Command="{Binding CancelCommand}"/>
             </MenuItem>
 
             <!-- CATEGORIES - generat dinamic in code-behind -->
@@ -109,25 +105,23 @@
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="220"/>
-                    <!-- Spanzuratoare (Canvas) -->
                     <ColumnDefinition Width="*"/>
-                    <!-- Dreapta: vieti + cuvant + litere -->
                 </Grid.ColumnDefinitions>
 
-                <!-- CANVAS SPANZURATOARE (redesenat in code-behind) -->
-                <Canvas Grid.Column="0"
-                        x:Name="HangmanCanvas"
+                <!-- Imagine spanzuratoare (incarcata din colectie de .jpg, in functie de greseli) -->
+                <Border Grid.Column="0"
                         Background="White"
+                        BorderBrush="#AAAAAA"
+                        BorderThickness="1"
+                        CornerRadius="4"
                         Width="210" Height="260"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Margin="0,0,10,0">
-                    <!-- Stalpul - intotdeauna vizibil -->
-                    <Line X1="30" Y1="250" X2="180" Y2="250" Stroke="Black" StrokeThickness="3"/>
-                    <Line X1="80" Y1="250" X2="80" Y2="20"  Stroke="Black" StrokeThickness="3"/>
-                    <Line X1="80" Y1="20"  X2="150" Y2="20" Stroke="Black" StrokeThickness="3"/>
-                    <Line X1="150" Y1="20" X2="150" Y2="45" Stroke="Black" StrokeThickness="3"/>
-                </Canvas>
+                    <Image Source="{Binding HangmanStageImage}"
+                           Stretch="Uniform"
+                           Margin="6"/>
+                </Border>
 
                 <!-- DREAPTA: vieti + cuvant + litere -->
                 <StackPanel Grid.Column="1" VerticalAlignment="Stretch">

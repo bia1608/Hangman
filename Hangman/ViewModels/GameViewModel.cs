@@ -33,6 +33,7 @@ namespace Hangman.ViewModels
         private bool _isGameActive;
         private string _currentCategory;
         private string _statusMessage = "Incepe un joc nou: File → New Game";
+        private BitmapImage? _hangmanStageImage;
 
         public User CurrentUser { get; }
         private BitmapImage? _userImage;
@@ -50,6 +51,16 @@ namespace Hangman.ViewModels
         public ObservableCollection<LetterButtonViewModel> LetterButtons { get; } = new();
         public ObservableCollection<LiveSlotViewModel> Lives { get; } = new();
 
+        public BitmapImage? HangmanStageImage
+        {
+            get => _hangmanStageImage;
+            private set
+            {
+                _hangmanStageImage = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int WrongGuesses
         {
             get => _wrongGuesses;
@@ -58,6 +69,7 @@ namespace Hangman.ViewModels
                 _wrongGuesses = value;
                 OnPropertyChanged();
                 HangmanStageChanged?.Invoke(value);
+                UpdateHangmanStageImage(value);
             }
         }
 
@@ -156,6 +168,7 @@ namespace Hangman.ViewModels
             InitializeLives();
             InitializeLetterButtons();
             LoadUserImage();
+            UpdateHangmanStageImage(0);
         }
 
         // ================================================================
@@ -390,6 +403,7 @@ namespace Hangman.ViewModels
             _wrongGuesses = data.WrongGuesses;
             OnPropertyChanged(nameof(WrongGuesses));
             HangmanStageChanged?.Invoke(_wrongGuesses);
+            UpdateHangmanStageImage(_wrongGuesses);
 
             IsGameActive = true;
             StatusMessage = $"Joc restaurat! {CurrentCategory} | Nivel {ConsecutiveWins}/3";
@@ -428,6 +442,35 @@ namespace Hangman.ViewModels
 
         private void ResetLives() { foreach (var l in Lives) l.IsUsed = false; }
         private void EnableAllLetterButtons() { foreach (var b in LetterButtons) b.IsEnabled = true; }
+
+        private void UpdateHangmanStageImage(int stage)
+        {
+            try
+            {
+                stage = Math.Clamp(stage, 0, MaxWrongGuesses);
+                var full = Path.Combine(
+                    AppDomain.CurrentDomain.BaseDirectory,
+                    "Data",
+                    "HangmanStages",
+                    $"hangman_{stage}.jpg");
+                if (!File.Exists(full))
+                {
+                    HangmanStageImage = null;
+                    return;
+                }
+
+                var img = new BitmapImage();
+                img.BeginInit();
+                img.UriSource = new Uri(full, UriKind.Absolute);
+                img.CacheOption = BitmapCacheOption.OnLoad;
+                img.EndInit();
+                HangmanStageImage = img;
+            }
+            catch
+            {
+                HangmanStageImage = null;
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
